@@ -12,5 +12,5 @@ The data is contained in the R file named "ICData.rda". This file contains a
 variables being measured by the sensor as well as the time in which the measurement
 was recorded. The variables of interest used throughout the manuscript are in columns
 5 and 9 and are named "tempf" (Temperature in Farenheit) and "windspeedmph" (wind
-speedm in mph) respectively. Data are recorded on the hourly level for each variable
+speed in mph) respectively. Data are recorded on the hourly level for each variable
 from July 20, 2020 through December 31, 2021.
