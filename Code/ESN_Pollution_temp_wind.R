@@ -48,7 +48,7 @@ nu = c(0.2,0.8)
 n.h = c(rep(first.n.h, layers-1), last.n.h)
 
 
-#Assumed/fixed parameters
+#Assumed/fixed parameters - these are for the Indiana data and will change for the Pollution data
 tau = 24
 pi.w = rep(0.1, layers)
 pi.win = rep(0.1, layers)
