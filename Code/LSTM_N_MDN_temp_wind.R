@@ -314,7 +314,7 @@ patiencePlateau = 5
 lrReduction = 0.5
 
 callback <- list(keras::callback_reduce_lr_on_plateau(monitor = "val_loss", factor = lrReduction, patience = patiencePlateau), keras::callback_early_stopping(monitor = "val_loss", patience = patienceEarlyStopping),
-                 keras::callback_model_checkpoint(filepath = paste0("/", "FFNN_mdn_weights.hdf5"), save_best_only = TRUE, save_weights_only = TRUE))
+                 keras::callback_model_checkpoint(filepath = paste0("FFNN_mdn_weights.hdf5"), save_best_only = TRUE, save_weights_only = TRUE))
 
 learningRate = 0.00001
 model_mdn %>% compile(
@@ -327,7 +327,7 @@ history_mdn <- fit(model_mdn, x = X.train.scaled, y = Y.train.scaled, epochs = 1
 time2 <- Sys.time()
 print(time2 - time1)
 
-load_model_weights_hdf5(model_mdn, paste0("/", "FFNN_mdn_weights.hdf5"))
+load_model_weights_hdf5(model_mdn, paste0("FFNN_mdn_weights.hdf5"))
 
 outputs_test_mdn <- predict(model_mdn, X.test.scaled)
 
