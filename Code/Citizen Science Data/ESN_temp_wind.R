@@ -29,7 +29,6 @@ options(cores = 4)
 load('ICData.rda')
 rawData = station_int[,c('tempf', 'windspeedmph')]
 
-#change above lines to load in the Pollution data
 
 ######################
 ### Deep ESN Model ###
