@@ -37,7 +37,7 @@ for(m in 1:n_ts) {
                     max.P = 10,
                     max.Q = 10,
                     max.d = 5,
-                    seasonal = TRUE,
+                    seasonal = FALSE,
                     ic = 'aicc')
   
   for(j in 1:355) {
