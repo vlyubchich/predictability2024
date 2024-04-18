@@ -26,8 +26,8 @@ xreg.temp.test=test[,c(6,12:22)]
 
 ###ARIMAX models
 
-wind.model=auto.arima(train$wind.res,xreg = xreg.wind.train)
-temp.model=auto.arima(train$tmpf.res,xreg = xreg.temp.train)
+wind.model=auto.arima(train$wind.res,xreg = xreg.wind.train, seasonal = FALSE)
+temp.model=auto.arima(train$tmpf.res,xreg = xreg.temp.train, seasonal = FALSE)
 
 pred.wind=matrix(nrow=(nrow(test)-1),ncol=3)
 pred.temp=matrix(nrow=(nrow(test)-1),ncol=3)
