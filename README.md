@@ -5,7 +5,7 @@ Supplemental codes for "Assessing Predictability of Environmental Processes with
 Both the Canada air pollution and citizen science datasets used for analysis in the associated manuscript.
 
 ## Code
-Codes used to perform a the referenced models from the associated manuscript.
+Codes used to perform the referenced models from the associated manuscript for both the air pollution and citizen science data applications.
 
 ## Forecasts
 Forecasts from each of the models referenced in the manuscript.
