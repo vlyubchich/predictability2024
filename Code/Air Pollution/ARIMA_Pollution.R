@@ -4,9 +4,11 @@ library(forecast)
 library(lubridate)
 library(dplyr)
 library(ggplot2)
+theme_set(theme_light())
 library(scales)
 library(scoringRules)
 library(scoringutils)
+library(tidyr)
 
 load('Data/pm25_2009_2019_golden_horseshoe_sites.rda')
 #dat<-read.csv('pm25_2009_2019_golden_horseshoe_sites.csv')
@@ -72,15 +74,15 @@ PERF <- lapply(1:n_ts, function(m) {
   # coverage
   cvr <- apply((results_lower[[m]] <= results_obs[[m]]) & (results_obs[[m]] <= results_upper[[m]]), 2, mean)
   # interval score
-  iscore <- results_upper[[m]] - results_lower[[m]] + 2 * (results_lower[[m]] - results_obs[[m]]) * as.numeric(results_obs[[m]] < results_lower[[m]]) / alpha + 2 * (results_obs[[m]] - results_upper[[m]]) * as.numeric(results_obs[[m]] > results_upper[[m]]) / alpha
+  iscore <- (results_upper[[m]] - results_lower[[m]]) + 2 * (results_lower[[m]] - results_obs[[m]]) * as.numeric(results_obs[[m]] < results_lower[[m]]) / alpha + 2 * (results_obs[[m]] - results_upper[[m]]) * as.numeric(results_obs[[m]] > results_upper[[m]]) / alpha
   iscore <- apply(iscore, 2, mean)
   # combine results
-  tibble(mse = mse,
-         cvr = cvr,
+  tibble(MSE = mse,
+         Coverage = cvr,
          iscore = iscore)
 })
 
-# Average across stations and horizons
+# Average across stations and horizons (Table 1 of the paper)
 bind_rows(PERF) %>%
   apply(2, mean)
 
@@ -88,5 +90,18 @@ bind_rows(PERF) %>%
   apply(2, sd)
 
 
+PERF_long <- bind_rows(PERF) %>%
+  mutate(h = rep(1:10, times = length(PERF))) %>%
+  pivot_longer(-h, names_to = "Metric", values_to = "Value")
+
+
+PERF_long %>%
+  filter(Metric %in% c("MSE", "Coverage")) %>%
+  ggplot(aes(x = as.factor(h), y = Value)) +
+  geom_boxplot() +
+  facet_wrap(~Metric, scales = "free") +
+  xlab("Forecasting horizon (days ahead)")
+
+ggsave("images/HorizonErorr_ARIMA.png", width = 8, height = 5)
 
 
