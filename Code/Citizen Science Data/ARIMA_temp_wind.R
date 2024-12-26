@@ -1,5 +1,5 @@
 #### Get data and divide into training and test
-
+rm(list = ls())
 load("Data/ICData.rda")
 
 dat=station_int[station_int[,4]==12,]
@@ -40,6 +40,20 @@ temp.model2=Arima(train$tmpf.res,xreg=as.matrix(xreg.temp.train),model=temp.mode
 temp.1=data.frame(forecast(temp.model2,xreg=as.matrix(xreg.temp.test[1,]),h=1))
 pred.temp[1,]=c(temp.1$Point.Forecast,temp.1$Lo.95,temp.1$Hi.95)
 
+# Simplified model for discussion
+temp.model33 <- auto.arima(train$tmpf.res, seasonal = FALSE)
+temp.model33
+# Series: train$tmpf.res
+# ARIMA(1,1,1)
+#
+# Coefficients:
+#   ar1      ma1
+# 0.5794  -0.8883
+# s.e.  0.0560   0.0291
+#
+# sigma^2 = 52.15:  log likelihood = -1452.75
+# AIC=2911.51   AICc=2911.56   BIC=2923.69
+
 ### Forecast
 for (i in 2:nrow(pred.wind)){
   wind.model2=Arima(c(train$wind.res,test$wind.res[1:(i-1)]),xreg=as.matrix(rbind(xreg.wind.train,xreg.wind.test[1:(i-1),])),model=wind.model)
@@ -50,6 +64,10 @@ for (i in 2:nrow(pred.wind)){
   temp.1=data.frame(forecast(temp.model2,xreg=as.matrix(xreg.temp.test[i,]),h=1))
   pred.temp[i,]=c(temp.1$Point.Forecast,temp.1$Lo.95,temp.1$Hi.95)
 
+
+  temp.model3 = Arima(c(train$tmpf.res,test$tmpf.res[1:(i-1)]), model = temp.model33)
+  temp3 = data.frame(forecast(temp.model3, h = 1))
+  pred.temp[i,] = c(temp3$Point.Forecast, temp3$Lo.95, temp3$Hi.95)
 }
 
 ### Actual values
@@ -84,7 +102,13 @@ for (i in 2:nrow(pred.wind)){
            Coverage = cvr,
            iscore = iscore)
   })
+PERF %>% as.data.frame()
+# MSE Coverage iscore
+# 1 44.84     0.95 32.053
 
+# Fahrenheit to Celsius MSE
+sqrt(51.28)*5/9
+# [1] 3.978336
 
-
-
+sqrt(44.84)*5/9
+# [1] 3.7201
