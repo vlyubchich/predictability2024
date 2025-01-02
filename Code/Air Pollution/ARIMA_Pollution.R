@@ -79,7 +79,8 @@ PERF <- lapply(1:n_ts, function(m) {
   # combine results
   tibble(MSE = mse,
          Coverage = cvr,
-         iscore = iscore)
+         iscore = iscore,
+         Location = m)
 })
 
 # Average across stations and horizons (Table 1 of the paper)
@@ -92,16 +93,20 @@ bind_rows(PERF) %>%
 
 PERF_long <- bind_rows(PERF) %>%
   mutate(h = rep(1:10, times = length(PERF))) %>%
-  pivot_longer(-h, names_to = "Metric", values_to = "Value")
+  pivot_longer(c(-h, -Location), names_to = "Metric", values_to = "Value") %>%
+  mutate(Location = as.factor(Location),
+         Metric = factor(Metric, levels = c("MSE", "Coverage", "iscore")))
 
 
 PERF_long %>%
   filter(Metric %in% c("MSE", "Coverage")) %>%
   ggplot(aes(x = as.factor(h), y = Value)) +
-  geom_boxplot() +
+  geom_boxplot(lwd = 1.1, color = "gray70") +
+  geom_line(aes(x = h, y = Value, color = Location), lwd = 0.9) +
   facet_wrap(~Metric, scales = "free") +
-  xlab("Forecasting horizon (days ahead)")
+  xlab("Forecasting horizon (days ahead)") +
+  theme(legend.position = "none")
 
-ggsave("images/HorizonErorr_ARIMA.png", width = 8, height = 5)
+ggsave("images/HorizonErorr_ARIMA.png", width = 8, height = 4)
 
 
