@@ -42,7 +42,7 @@ for(m in 1:n_ts) { # m = 1
   # Create lagged values
   lagged_values <- lapply(Lags, function(lag) dplyr::lag(x, lag))
   names(lagged_values) <- paste0("lag", Lags)
-  X = data.frame(x, lagged_values, doy, t = 1:length(dates_formatted))
+  X = data.frame(x, lagged_values, doy) #, t = 1:length(dates_formatted)
 
   # train <- X[dates_formatted < ymd("2019-01-01"),]  # update train
   # # fit only on the training data
@@ -78,7 +78,7 @@ for(m in 1:n_ts) { # m = 1
       results_upper[[m]][j, l] <- results_mean[[m]][j, l] + fit2_uq
 
       # Update data used for predictions
-      data4pred$t <- data4pred$t + 1
+      # data4pred$t <- data4pred$t + 1
       data4pred$doy <- data4pred$doy + 1
       if (data4pred$doy > 365) {
         data4pred$doy <- data4pred$doy - 365
@@ -125,10 +125,13 @@ PERF <- lapply(1:n_ts, function(m) {
 # Average across stations and horizons (Table 1 of the paper)
 bind_rows(PERF) %>%
   apply(2, mean)
+# MSE   Coverage     iscore   Location
+# 21.1321288  0.9412911 22.3859268  6.5000000
 
 bind_rows(PERF) %>%
   apply(2, sd)
-
+# MSE   Coverage     iscore   Location
+# 4.23952629 0.02023072 2.26728642 3.46652661
 
 PERF_long <- bind_rows(PERF) %>%
   mutate(h = rep(1:10, times = length(PERF))) %>%
@@ -149,3 +152,10 @@ PERF_long %>%
 ggsave("images/HorizonError_RF.png", width = 8, height = 4)
 
 
+# Calculate on the testing set:
+
+testing <- bind_rows(results_obs)
+
+psych::describe(testing[,1])
+# vars       n mean   sd median trimmed  mad  min   max range skew kurtosis   se
+# X1    1 4260 6.83 4.41   5.79    6.23 3.59 0.16 36.95 36.79 1.45     2.79 0.07
